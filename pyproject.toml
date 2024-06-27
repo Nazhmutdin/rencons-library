@@ -11,6 +11,10 @@ requires = [
 ]
 
 
+[tool.setuptools.packages]
+find = {}
+
+
 [project]
 name='naks_library'
 version="0.0.1"
