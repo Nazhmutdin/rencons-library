@@ -5,7 +5,7 @@ from sqlalchemy.orm import DeclarativeBase, attributes
 from pydantic import GetCoreSchemaHandler, ValidationInfo, Field
 from sqlalchemy import BinaryExpression, ColumnElement, any_, and_, or_
 
-from src.base_shema import BaseShema
+from naks_library.base_shema import BaseShema
 
 
 __all__ = [
