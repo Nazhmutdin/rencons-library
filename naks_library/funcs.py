@@ -9,7 +9,11 @@ from dateutil.parser import parser
 __all__ = [
     "to_uuid",
     "str_to_datetime",
-    "to_date"
+    "to_date",
+    "is_float",
+    "is_kleymo",
+    "is_uuid",
+    "to_datetime"
 ]
 
 
