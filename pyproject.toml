@@ -2,12 +2,7 @@
 build-backend = "setuptools.build_meta"
 requires = [
   "setuptools>=0.8",
-  "wheel",
-  "dateutils",
-  "pydantic",
-  "dateutils",
-  "SQLAlchemy",
-  "setuptools"
+  "wheel"
 ]
 
 
@@ -23,6 +18,13 @@ authors = [
   { name="Gumuev Nazhmutdin", email="gumuevnazhmutdin123@gmail.com" },
 ]
 requires-python = ">=3.12"
+dependencies = [
+  "dateutils",
+  "pydantic",
+  "dateutils",
+  "SQLAlchemy",
+  "setuptools"
+]
 
 
 [project.urls]
