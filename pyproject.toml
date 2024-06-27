@@ -1,0 +1,25 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [
+  "setuptools>=0.8",
+  "wheel",
+  "dateutils",
+  "pydantic",
+  "dateutils",
+  "SQLAlchemy",
+  "setuptools"
+]
+
+
+[project]
+name='naks_library'
+version="0.0.1"
+description='package for naks projects'
+authors = [
+  { name="Gumuev Nazhmutdin", email="gumuevnazhmutdin123@gmail.com" },
+]
+requires-python = ">=3.12"
+
+
+[project.urls]
+Homepage = "https://github.com/Nazhmutdin/naks_library"
