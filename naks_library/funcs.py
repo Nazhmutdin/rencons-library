@@ -32,7 +32,10 @@ def is_kleymo(v: str) -> bool:
     return False
 
 
-def is_uuid(uuid: str | UUID) -> True:
+def is_uuid(uuid: str | UUID) -> bool:
+    if isinstance(uuid, UUID):
+        return True
+    
     try:
         UUID(uuid)
         return True
