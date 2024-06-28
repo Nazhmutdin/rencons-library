@@ -10,10 +10,7 @@ from naks_library.exc import *
 
 
 __all__: list[str] = [
-    "BaseDBService",
-    "WelderDBService",
-    "WelderCertificationDBService",
-    "NDTDBService"
+    "BaseDBService"
 ]
 
 

@@ -12,7 +12,7 @@ find = {}
 
 [project]
 name='naks_library'
-version="0.0.1"
+version="0.0.2"
 description='package for naks projects'
 authors = [
   { name="Gumuev Nazhmutdin", email="gumuevnazhmutdin123@gmail.com" },
