@@ -1,15 +1,16 @@
 from datetime import date, datetime
 
-from naks_library.base_shema import BaseShema
-from naks_library.funcs import str_to_datetime
 from naks_library.base_db_service import BaseDBService
+from naks_library.funcs import str_to_datetime
+from naks_library.base_shema import BaseShema
 import pytest
 
 
-class BaseTestDBService[Shema: BaseShema]:
-    service: BaseDBService[Shema, Shema, Shema]
-    __create_shema__: type[BaseShema]
-    __update_shema__: type[BaseShema]
+class BaseTestDBService[DTO, Model, Shema: BaseShema, CreateShema: BaseShema, UpdateShema: BaseShema]:
+    service: BaseDBService[DTO, Model, Shema, CreateShema, UpdateShema]
+    __dto__: DTO
+    __create_shema__: type[CreateShema]
+    __update_shema__: type[UpdateShema]
 
 
     async def test_add(self, items: list[Shema]) -> None:
@@ -20,7 +21,7 @@ class BaseTestDBService[Shema: BaseShema]:
 
     async def test_get(self, attr: str, item: Shema) -> None:
 
-        assert await self.service.get(getattr(item, attr)) == item
+        assert await self.service.get(getattr(item, attr)) == self.__dto__(**item.model_dump())
 
 
     async def test_update(self, ident: str, data: dict) -> None:
@@ -42,7 +43,7 @@ class BaseTestDBService[Shema: BaseShema]:
 
             assert getattr(item, key) == value
 
-    
+
     async def test_fail_update(self, ident: str, data: dict, exception) -> None:
         with pytest.raises(exception):
             await self.service.update(ident, self.__update_shema__.model_validate(data, from_attributes=True))

@@ -1,24 +1,22 @@
 import typing as t
 import uuid
 
-from sqlalchemy.ext.asyncio import AsyncConnection
+from sqlalchemy.ext.asyncio import AsyncSession
 import sqlalchemy as sa
-
 
 
 class CRUDMixin: 
 
     @classmethod
-    async def get(cls, conn: AsyncConnection, ident: uuid.UUID | str):
+    async def get(cls, conn: AsyncSession, ident: uuid.UUID | str):
         stmt = cls._dump_get_stmt(ident)
         response = await conn.execute(stmt)
-        result = response.mappings().one_or_none()
-
+        result = response.scalar_one_or_none()
         return result
         
 
     @classmethod
-    async def get_many(cls, conn: AsyncConnection, expression: sa.ColumnExpressionArgument, limit: int, offset: int):
+    async def get_many(cls, conn: AsyncSession, expression: sa.ColumnExpressionArgument, limit: int, offset: int):
         stmt = cls._dump_get_many_stmt(expression)
 
         amount = await cls.count(conn, expression)
@@ -31,13 +29,13 @@ class CRUDMixin:
         
         response = await conn.execute(stmt)
 
-        result = response.mappings().all()
+        result = response.scalars().all()
         
         return (result, amount)
         
 
     @classmethod
-    async def create(cls, data: list[dict], conn: AsyncConnection):
+    async def create(cls, data: list[dict], conn: AsyncSession):
         stmt = cls._dump_create_stmt(
             data
         )
@@ -46,19 +44,19 @@ class CRUDMixin:
 
 
     @classmethod
-    async def update(cls, conn: AsyncConnection, ident: uuid.UUID | str, data: dict[str, t.Any]):
+    async def update(cls, conn: AsyncSession, ident: uuid.UUID | str, data: dict[str, t.Any]):
         stmt = cls._dump_update_stmt(ident, data)
         await conn.execute(stmt)
 
 
     @classmethod
-    async def delete(cls, conn: AsyncConnection, ident: uuid.UUID | str):
+    async def delete(cls, conn: AsyncSession, ident: uuid.UUID | str):
         stmt = cls._dump_delete_stmt(ident)
         await conn.execute(stmt)
 
 
     @classmethod
-    async def count(cls, conn: AsyncConnection, expression: sa.ColumnExpressionArgument | None = None):
+    async def count(cls, conn: AsyncSession, expression: sa.ColumnExpressionArgument | None = None):
         if isinstance(expression, sa.ColumnElement):
 
             stmt = sa.select(sa.func.count()).select_from(cls).where(expression)

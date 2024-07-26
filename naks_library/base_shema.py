@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class BaseShema(BaseModel):
-    __fields_ignore__: list[str]
+    __fields_ignore__: list[str] = []
 
     model_config = ConfigDict(
         populate_by_name=True,

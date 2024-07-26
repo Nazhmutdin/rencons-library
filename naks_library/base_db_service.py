@@ -1,9 +1,10 @@
 from uuid import UUID
+import typing as t
 
-from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from naks_library.base_request_shema import BaseRequestShema
+from naks_library.base_model import CRUDMixin
 from naks_library import BaseShema
 from naks_library.uows import UOW
 from naks_library.exc import *
@@ -14,8 +15,14 @@ __all__: list[str] = [
 ]
 
 
-class BaseDBService[Shema: BaseShema, Model: DeclarativeBase, RequestShema: BaseRequestShema]:
-    __shema__: type[Shema]
+class BaseDBService[
+    DTO, 
+    Model: CRUDMixin, 
+    RequestShema: BaseRequestShema, 
+    CreateShema: BaseShema, 
+    UpdateShema: BaseShema 
+]:
+    __dto__: type[DTO]
     __model__: type[Model]
 
     def __init__(self, session: AsyncSession) -> None:
@@ -23,28 +30,28 @@ class BaseDBService[Shema: BaseShema, Model: DeclarativeBase, RequestShema: Base
         self.uow = UOW(self.session)
 
 
-    async def get(self, ident: str | UUID) -> Shema | None:
+    async def get(self, ident: str | UUID) -> DTO | None:
         try:
             return await self._get(ident)
         except IntegrityError as e:
             raise GetDBException(e)
 
 
-    async def get_many(self, request_shema: RequestShema) -> tuple[list[Shema], int]:
+    async def get_many(self, request_shema: RequestShema) -> tuple[list[DTO], int]:
         try:
             return await self._get_many(request_shema)
         except IntegrityError as e:
             raise GetManyDBException(e)
 
 
-    async def add[CreateShema: BaseShema](self, *data: CreateShema) -> None:
+    async def add(self, *data: CreateShema) -> None:
         try:
-            await self._add(list(data))
+            await self._add(data)
         except IntegrityError as e:
             raise CreateDBException(e, self.__model__)
 
 
-    async def update[UpdateShema: BaseShema](self, ident: str | UUID, data: UpdateShema) -> None:
+    async def update(self, ident: str | UUID, data: UpdateShema) -> None:
         try:
             await self._update(ident, data)
         except IntegrityError as e:
@@ -61,43 +68,43 @@ class BaseDBService[Shema: BaseShema, Model: DeclarativeBase, RequestShema: Base
     async def count(self) -> int:
         async with self.uow as uow:
 
-                return await self.__model__.count(uow.conn)
+            return await self.__model__.count(uow.session)
             
 
-    async def _get(self, ident: UUID | str) -> Shema | None:
+    async def _get(self, ident: UUID | str) -> DTO | None:
         async with self.uow as uow:
 
-            res = await self.__model__.get(uow.conn, ident)
+            res = await self.__model__.get(uow.session, ident)
 
             if res:
-                return self.__shema__.model_validate(res, from_attributes=True)
+                return self.__dto__(**res.__dict__)
 
 
-    async def _get_many(self, request_shema: RequestShema) -> tuple[list[Shema], int]:
+    async def _get_many(self, request_shema: RequestShema) -> tuple[list[DTO], int]:
         async with self.uow as uow:
             expression = request_shema.dump_expression()
 
-            result, amount = await self.__model__.get_many(uow.conn, expression, request_shema.limit, request_shema.offset)
+            result, amount = await self.__model__.get_many(uow.session, expression, request_shema.limit, request_shema.offset)
 
             if result:
-                result = [self.__shema__.model_validate(el, from_attributes=True) for el in result]
+                result = [self.__dto__(**el.__dict__) for el in result]
             
             return (result, amount)
 
 
-    async def _add[CreateShema: BaseShema](self, data: list[CreateShema]) -> None:
+    async def _add(self, data: t.Sequence[CreateShema]) -> None:
         async with self.uow as uow:
             await self.__model__.create(
                 [el.model_dump() for el in data], 
-                uow.conn
+                uow.session
             )
 
             await uow.commit()
 
 
-    async def _update[UpdateShema: BaseShema](self, ident: str | UUID, data: UpdateShema) -> None:
+    async def _update(self, ident: str | UUID, data: UpdateShema) -> None:
         async with self.uow as uow:
-            await self.__model__.update(uow.conn, ident, data.model_dump(exclude_unset=True))
+            await self.__model__.update(uow.session, ident, data.model_dump(exclude_unset=True))
 
             await uow.commit()
 
@@ -105,7 +112,6 @@ class BaseDBService[Shema: BaseShema, Model: DeclarativeBase, RequestShema: Base
     async def _delete(self, idents: list[str | UUID]) -> None:
         async with self.uow as uow:
             for ident in idents:
-                await self.__model__.delete(uow.conn, ident)
+                await self.__model__.delete(uow.session, ident)
             
             await uow.commit()
-
