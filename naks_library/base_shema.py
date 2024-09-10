@@ -2,13 +2,12 @@ from pydantic import BaseModel, ConfigDict
 
 
 class BaseShema(BaseModel):
-    __fields_ignore__: list[str] = []
 
     model_config = ConfigDict(
         populate_by_name=True,
         arbitrary_types_allowed=True,
         validate_assignment=True,
-        revalidate_instances="always"
+        revalidate_instances="always",
     )
     
     
@@ -19,8 +18,6 @@ class BaseShema(BaseModel):
         self_dict = self.model_dump()
 
         for key, value in other.model_dump().items():
-            if key in self.__fields_ignore__: 
-                continue
             
             if key not in self_dict:
                 return False

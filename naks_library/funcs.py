@@ -7,6 +7,7 @@ from dateutil.parser import parser
 
 
 __all__ = [
+    "seq",
     "to_uuid",
     "str_to_datetime",
     "to_date",
@@ -15,6 +16,22 @@ __all__ = [
     "is_uuid",
     "to_datetime"
 ]
+
+def seq(start: int, stop: int, step: float | int):
+    result = []
+    cur = start
+
+    if start > stop:
+        raise ValueError
+    
+    if step <= 0:
+        raise ValueError
+
+    while cur < stop:
+        result.append(cur)
+        cur += step
+
+    return result
 
 
 def is_float(v: str) -> bool:
@@ -57,7 +74,7 @@ def str_to_datetime(date_string, dayfirst: bool = False) -> datetime | None:
         return None
     
 
-def to_datetime(datetime_data: str | datetime | t.Iterable[int] | None, dayfirst: bool = False) -> datetime:
+def to_datetime(datetime_data: str | datetime | t.Any | None, dayfirst: bool = False) -> datetime:
     if not datetime_data:
         raise ValueError(f"NoneType cannot be converted to datetime'")
     
@@ -72,13 +89,10 @@ def to_datetime(datetime_data: str | datetime | t.Iterable[int] | None, dayfirst
 
         return _datetime
     
-    if isinstance(datetime_data, t.Iterable) and 3 < len(datetime_data) < 7:
-        return datetime(*datetime_data)
-    
     raise ValueError(f"Invalid datetime data '{datetime_data}'")
 
 
-def to_date(date_data: str | date | datetime | t.Iterable[int] | None, dayfirst: bool = False) -> date:
+def to_date(date_data: str | date | datetime | t.Any | None, dayfirst: bool = False) -> date:
     if not date_data:
         raise ValueError(f"NoneType cannot be converted to date'")
     
