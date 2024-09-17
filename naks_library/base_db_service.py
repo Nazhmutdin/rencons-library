@@ -6,50 +6,68 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import attributes, DeclarativeBase
 import sqlalchemy as sa
 
-from naks_library.base_shema import BaseShema
+from naks_library.base_shema import BaseShema, BaseSelectShema
 from naks_library.utils import AbstractFilter
 from naks_library.exc import *
 
 
 type FiltersMapKey = str
 type FilterArgsDict = dict[str, t.Any]
+type FiltersMapType = dict[FiltersMapKey, AbstractFilter]
+type SelectAttrsType = list[sa.ColumnClause]
+type SelectFromType = list[sa.FromClause]
 
 
 class BaseDBService[
-    DTO, 
-    Model: DeclarativeBase, 
-    SelectShema: BaseShema,
+    DTO,
+    Model: DeclarativeBase,
+    SelectShema: BaseSelectShema,
     CreateShema: BaseShema,
     UpdateShema: BaseShema
 ]:
-    __dto__: type[DTO]
-    __model__: type[Model]
-    _filters_map: dict[FiltersMapKey, AbstractFilter]
-    _select_attrs: list[sa.ColumnClause | Model]
-    _select_from_attrs: list[sa.FromClause]
-    _and_model_columns: list[attributes.InstrumentedAttribute]
-    _or_model_columns: list[attributes.InstrumentedAttribute]
+    def __init__(
+            self,
+            dto: type[DTO],
+            model: type[Model],
+            filters_map: FiltersMapType,
+            select_attrs: SelectAttrsType,
+            select_from_attrs: SelectFromType,
+            and_model_columns: list[attributes.InstrumentedAttribute],
+            or_model_columns: list[attributes.InstrumentedAttribute]
+        ) -> None:
+        
+        self.__dto__ = dto
+        self.__model__ = model
+        self._filters_map = filters_map
+        self._select_attrs = select_attrs
+        self._select_from_attrs = select_from_attrs
+        self._and_model_columns = and_model_columns
+        self._or_model_columns = or_model_columns
 
 
-    async def get(self, session: AsyncSession, ident: str | UUID) -> DTO | None:
+    async def get(self, session: AsyncSession, ident: str | UUID):
         try:
             return await self._get(session, ident)
         except IntegrityError as e:
-            raise GetDBException(e)
+            raise SelectDBException(e)
         
     
-    async def get_many(self, session: AsyncSession, filters: SelectShema | None = None, limit: int | None = None, offset: int | None = None) -> list[DTO]:
+    def get_model(self):
+        return self.__model__
+        
+    
+    async def get_many(self, session: AsyncSession, filters: SelectShema | None = None, limit: int | None = None, offset: int | None = None):
         try:
             return await self._get_many(session, filters, limit, offset)
         except IntegrityError as e:
-            raise GetManyDBException(e, self.__model__)
+            raise SelectDBException(e)
 
 
     async def insert(self, session: AsyncSession, *data: CreateShema) -> None:
         try:
             await self._insert(session, data)
         except IntegrityError as e:
-            raise CreateDBException(e, self.__model__)
+            raise InsertDBException(e)
 
 
     async def update(self, session: AsyncSession, ident: str | UUID, data: UpdateShema) -> None:
@@ -70,14 +88,14 @@ class BaseDBService[
             raise DeleteDBException(e)
 
 
-    async def count(self, session: AsyncSession, filters: SelectShema | None = None) -> int:
+    async def count(self, session: AsyncSession, filters: SelectShema | None = None):
         try:
             return await self._count(session, filters)
         except IntegrityError as e:
-            raise GetDBException(e)
+            raise SelectDBException(e)
 
 
-    async def _get(self, session: AsyncSession, ident: UUID | str) -> DTO | None:
+    async def _get(self, session: AsyncSession, ident: UUID | str):
         async with session as session:
             stmt = sa.select(self.__model__).where(
                 self.ident_column == ident
@@ -89,7 +107,7 @@ class BaseDBService[
                 return self.__dto__(**res.__dict__)
             
     
-    async def _get_many(self, session: AsyncSession, filters: SelectShema | None, limit: int | None, offset: int | None) -> list[DTO]:
+    async def _get_many(self, session: AsyncSession, filters: SelectShema | None, limit: int | None, offset: int | None):
         async with session as session:
             stmt = self.dump_base_get_many_stmt(
                 filters.model_dump(exclude_none=True, exclude_unset=True) if filters else {}, 

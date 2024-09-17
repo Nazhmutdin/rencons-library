@@ -343,23 +343,31 @@ def filter_data[DTO](filters: SelectAShema | SelectBShema, all_data: list[DTO]) 
 
 
 class ADBService(BaseDBService[AData, AModel, SelectAShema, CreateAShema, UpdateAShema]):
-    __dto__ = AData
-    __model__ = AModel
-    _filters_map = A_FILTERS_MAP
-    _select_attrs = A_SELECT_ATTRS
-    _select_from_attrs = A_SELECT_FROM_ATTRS
-    _and_model_columns = A_AND_SELECT_COLUMNS, 
-    _or_model_columns = A_OR_SELECT_COLUMNS
+
+    def __init__(self) -> None:
+        super().__init__(
+            AData, 
+            AModel, 
+            A_FILTERS_MAP, 
+            A_SELECT_ATTRS, 
+            A_SELECT_FROM_ATTRS, 
+            A_AND_SELECT_COLUMNS, 
+            A_OR_SELECT_COLUMNS
+        )
 
 
 class BDBService(BaseDBService[BData, BModel, SelectBShema, CreateBShema, UpdateBShema]):
-    __dto__ = BData
-    __model__ = BModel
-    _filters_map = B_FILTERS_MAP
-    _select_attrs = B_SELECT_ATTRS
-    _select_from_attrs = B_SELECT_FROM_ATTRS
-    _and_model_columns = B_AND_SELECT_COLUMNS, 
-    _or_model_columns = B_OR_SELECT_COLUMNS
+
+    def __init__(self) -> None:
+        super().__init__(
+            BData, 
+            BModel, 
+            B_FILTERS_MAP, 
+            B_SELECT_ATTRS, 
+            B_SELECT_FROM_ATTRS, 
+            B_AND_SELECT_COLUMNS, 
+            B_OR_SELECT_COLUMNS
+        )
     
 
 class FakeADataGenerator(BaseFakeDataGenerator):

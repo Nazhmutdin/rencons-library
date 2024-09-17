@@ -1,34 +1,33 @@
+import typing as t
+
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import DeclarativeBase
 
 
 __all__ = [
-    "CreateDBException",
-    "GetDBException",
-    "GetManyDBException",
+    "InsertDBException",
+    "SelectDBException",
     "UpdateDBException",
     "DeleteDBException"
 ]
 
 
+_DBException = t.TypeVar("_DBException", bound=IntegrityError)
+
+
 class DBExeption(Exception):
-    def __init__[Model: DeclarativeBase](self, orig_exception: IntegrityError, model: Model) -> None:
+    def __init__(self, orig_exception: _DBException) -> None:
         self.orig_exception = orig_exception
-        self.model = model
 
 
     @property
     def message(self) -> str:
-        raise self.orig_exception._message()
+        return self.orig_exception._message()
 
 
-class CreateDBException(DBExeption): ...
+class InsertDBException(DBExeption): ...
 
 
-class GetDBException(DBExeption): ...
-
-
-class GetManyDBException(DBExeption): ...
+class SelectDBException(DBExeption): ...
 
 
 class UpdateDBException(DBExeption): ...
