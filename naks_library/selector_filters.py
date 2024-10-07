@@ -6,11 +6,6 @@ import sqlalchemy as sa
 from abc import ABC, abstractmethod
 
 
-DATE_STRING_FORMAT = "%d.%m.%Y"
-
-DATETIME_STRING_FORMAT = "%d.%m.%Y %H:%M:%S.%f%z"
-
-
 class AbstractFilter(ABC): 
 
     def __init__(self, column: attributes.InstrumentedAttribute):

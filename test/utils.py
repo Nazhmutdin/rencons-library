@@ -16,9 +16,10 @@ from faker import Faker
 
 from naks_library import Eq
 from naks_library.testing.fake_data_generator import BaseFakeDataGenerator
+from naks_library.crud_mapper import SqlAlchemyCrudMapper
 from naks_library.base_db_service import BaseDBService
 from naks_library.base_shema import BaseShema
-from naks_library.utils import AbstractFilter, EqualFilter, ILikeAnyFilter, ILikeFilter, InFilter, FromFilter, BeforeFilter, LikeFilter, LikeAnyFilter
+from naks_library.selector_filters import AbstractFilter, EqualFilter, ILikeAnyFilter, ILikeFilter, InFilter, FromFilter, BeforeFilter, LikeFilter, LikeAnyFilter
 
 
 DB_URL = "postgresql+asyncpg://{0}:{1}@{2}:{3}/{4}".format(
@@ -45,8 +46,7 @@ STRINGS = [
 
 engine = create_async_engine(
     DB_URL,
-    poolclass=sa.NullPool,
-    # echo=True
+    poolclass=sa.NullPool
 )
 
 session_maker = async_sessionmaker(engine, autocommit=False, autoflush=False, expire_on_commit=False)
@@ -272,43 +272,7 @@ class SelectAShema(BaseShema):
     b_foo6: list[str] | None = Field(default=None)
 
 
-class CreateBShema(BaseModel):
-    ident: uuid.UUID
-    a_ident: uuid.UUID
-    foo1: float
-    foo2: str
-    foo3: date
-    foo4: date
-    foo5: float
-    foo6: list[str]
-
-
-class UpdateBShema(BaseModel):
-    a_ident: uuid.UUID | None = Field(default=None)
-    foo1: float | None = Field(default=None)
-    foo2: str | None = Field(default=None)
-    foo3: date | None = Field(default=None)
-    foo4: date | None = Field(default=None)
-    foo5: float | None = Field(default=None)
-    foo6: list[str] | None = Field(default=None)
-
-
-class SelectBShema(BaseShema):
-    idents: list[uuid.UUID] | None = Field(default=None)
-    a_idents: list[uuid.UUID] | None = Field(default=None)
-    foo1_from: float | None = Field(default=None)
-    foo1_before: float | None = Field(default=None)
-    foo2: str | None = Field(default=None)
-    foo3_from: date | None = Field(default=None)
-    foo3_before: date | None = Field(default=None)
-    foo4_from: date | None = Field(default=None)
-    foo4_before: date | None = Field(default=None)
-    foo5_from: float | None = Field(default=None)
-    foo5_before: float | None = Field(default=None)
-    foo6: list[str] | None = Field(default=None)
-
-
-def filter_data[DTO](filters: SelectAShema | SelectBShema, all_data: list[DTO]) -> list[DTO]:
+def filter_data[DTO](filters: SelectAShema, all_data: list[DTO]) -> list[DTO]:
 
     mode = "a" if isinstance(filters, SelectAShema) else "b"
 
@@ -356,19 +320,12 @@ class ADBService(BaseDBService[AData, AModel, SelectAShema, CreateAShema, Update
         )
 
 
-class BDBService(BaseDBService[BData, BModel, SelectBShema, CreateBShema, UpdateBShema]):
+class ACrudMapper(SqlAlchemyCrudMapper[AData, CreateAShema, UpdateAShema]):
+    __model__ = AModel
 
-    def __init__(self) -> None:
-        super().__init__(
-            BData, 
-            BModel, 
-            B_FILTERS_MAP, 
-            B_SELECT_ATTRS, 
-            B_SELECT_FROM_ATTRS, 
-            B_AND_SELECT_COLUMNS, 
-            B_OR_SELECT_COLUMNS
-        )
-    
+    def _convert(self, row: sa.Row[t.Any]) -> AData:
+        return AData(**row.__dict__)
+
 
 class FakeADataGenerator(BaseFakeDataGenerator):
     faker = Faker()
@@ -441,13 +398,21 @@ class TestData:
         self.fake_b_dicts = self.fake_b_generator.generate(50)
         self.fake_b = [BData(**el) for el in self.fake_b_dicts]
 
+
+    def get_random_a(self):
+        return self.faker.random_element(self.fake_a)
+
     
     def get_random_a_ident(self) -> uuid.UUID:
-        return self.faker.random_element(self.fake_a).ident
+        return self.get_random_a().ident
+
+
+    def get_random_b(self):
+        return self.faker.random_element(self.fake_b)
 
     
     def get_random_b_ident(self) -> uuid.UUID:
-        return self.faker.random_element(self.fake_b).ident
+        return self.get_random_b().ident
 
     
     def get_random_b_a_ident(self) -> uuid.UUID:

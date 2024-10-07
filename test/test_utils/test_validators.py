@@ -4,8 +4,8 @@ from datetime import datetime, date
 
 from pydantic import BaseModel
 
-from naks_library.validators import *
-from naks_library.utils import DATE_STRING_FORMAT, DATETIME_STRING_FORMAT
+from naks_library.utils.validators import *
+from naks_library import DATE_STRING_FORMAT, DATETIME_STRING_FORMAT
 
 
 class PydanticTestModel(BaseModel):

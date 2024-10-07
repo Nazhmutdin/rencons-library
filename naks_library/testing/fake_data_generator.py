@@ -2,10 +2,10 @@ from datetime import date
 
 from faker import Faker
 
-from naks_library.funcs import seq
+from naks_library.utils.funcs import seq
 
 
-class BaseFakeDataGenerator[T]:
+class BaseFakeDataGenerator[T: dict]:
     faker = Faker()
 
     def generate() -> list[T]: ...

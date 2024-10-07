@@ -3,8 +3,8 @@ from uuid import UUID
 
 from pydantic import BeforeValidator, PlainSerializer
 
-from naks_library.funcs import to_date, to_datetime, to_uuid
-from naks_library.utils import DATE_STRING_FORMAT, DATETIME_STRING_FORMAT
+from naks_library.utils import to_date, to_datetime, to_uuid
+from naks_library import DATE_STRING_FORMAT, DATETIME_STRING_FORMAT
 
 
 __all__ = [
@@ -34,11 +34,11 @@ def _optional_date_validator_func(v) -> date | None:
         return None
 
 
-def _datetime_validator_func(v) -> date:
+def _datetime_validator_func(v) -> datetime:
     return to_datetime(v)
 
 
-def _optional_datetime_validator_func(v) -> date | None:
+def _optional_datetime_validator_func(v) -> datetime | None:
     try:
         return to_datetime(v)
     except:

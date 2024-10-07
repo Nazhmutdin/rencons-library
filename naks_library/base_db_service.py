@@ -7,7 +7,7 @@ from sqlalchemy.orm import attributes, DeclarativeBase
 import sqlalchemy as sa
 
 from naks_library.base_shema import BaseShema, BaseSelectShema
-from naks_library.utils import AbstractFilter
+from naks_library.selector_filters import AbstractFilter
 from naks_library.exc import *
 
 
@@ -50,10 +50,6 @@ class BaseDBService[
             return await self._get(session, ident)
         except IntegrityError as e:
             raise SelectDBException(e)
-        
-    
-    def get_model(self):
-        return self.__model__
         
     
     async def get_many(self, session: AsyncSession, filters: SelectShema | None = None, limit: int | None = None, offset: int | None = None):
