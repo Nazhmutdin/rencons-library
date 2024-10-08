@@ -1,15 +1,10 @@
-from typing import Any
 from uuid import UUID
 
-from naks_library.commiter import ICommitter
-from naks_library._types import _Gateway
+from naks_library.interfaces import ICommitter
+from naks_library._types import _CreateDTO, _UpdateDTO, _Gateway, _DTO
 
 
-class Interactor[Input, Output]:
-    async def __call__(self, input: Input) -> Output: ...
-
-
-class BaseCreateInteractor:
+class BaseCreateInteractor[T: _CreateDTO]:
     def __init__(
         self,
         gateway: _Gateway,
@@ -19,13 +14,13 @@ class BaseCreateInteractor:
         self.commiter = commiter
 
     
-    async def __call__(self, data: Any):
+    async def __call__(self, data: T):
         await self.gateway.insert(data)
 
         await self.commiter.commit()
 
 
-class BaseGetInteractor:
+class BaseGetInteractor[T: _DTO]:
     def __init__(
         self,
         gateway: _Gateway
@@ -33,12 +28,12 @@ class BaseGetInteractor:
         self.gateway = gateway
 
     
-    async def __call__(self, ident: UUID):
+    async def __call__(self, ident: UUID) -> T | None:
 
-        return await self.gateway.get(ident)
+        return (await self.gateway.get(ident))
 
 
-class BaseUpdateInteractor:
+class BaseUpdateInteractor[T: _UpdateDTO]:
     def __init__(
         self,
         gateway: _Gateway,
@@ -48,7 +43,7 @@ class BaseUpdateInteractor:
         self.commiter = commiter
 
     
-    async def __call__(self, ident: UUID, data: Any):
+    async def __call__(self, ident: UUID, data: T):
         await self.gateway.update(ident, data)
 
         await self.commiter.commit()

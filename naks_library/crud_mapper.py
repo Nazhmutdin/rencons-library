@@ -5,7 +5,7 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 import sqlalchemy as sa
 
-from naks_library._types import _Model, _DTO
+from naks_library._types import _Model
 from naks_library.selector_filters import AbstractFilter
 from naks_library.common.get_many_stmt_creator import IGetManyStmtCreator
 
@@ -22,27 +22,7 @@ class SqlAlchemySessionInitializer:
         self.session = session
 
 
-class ICrudGateway[DTO, CreateDTO, UpdateDTO](t.Protocol):
-    __model__: _Model
-    session: AsyncSession
-
-    @abstractmethod
-    async def insert(self, data: CreateDTO): ...
-
-
-    @abstractmethod
-    async def get(self, ident: UUID) -> DTO | None: ...
-
-
-    @abstractmethod
-    async def update(self, ident: UUID | str, data: UpdateDTO): ...
-
-
-    @abstractmethod
-    async def delete(self, ident: UUID): ...
-
-
-class SqlAlchemyCrudMapper[DTO: _DTO, CreateDTO, UpdateDTO](ABC, SqlAlchemySessionInitializer):
+class SqlAlchemyCrudMapper[DTO, CreateDTO, UpdateDTO](ABC, SqlAlchemySessionInitializer):
     __model__: type[_Model]
 
 
@@ -91,7 +71,7 @@ class SqlAlchemyCrudMapper[DTO: _DTO, CreateDTO, UpdateDTO](ABC, SqlAlchemySessi
         pass
 
 
-class SqlAlchemyGetManyMapper[T: _DTO](ABC):
+class SqlAlchemyGetManyMapper[DTO](ABC):
 
     def __init__(
             self,
@@ -137,5 +117,5 @@ class SqlAlchemyGetManyMapper[T: _DTO](ABC):
 
 
     @abstractmethod
-    def _convert(self, row: sa.Row[t.Any]) -> T:
+    def _convert(self, row: sa.Row[t.Any]) -> DTO:
         pass

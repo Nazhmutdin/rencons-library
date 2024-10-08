@@ -8,7 +8,7 @@ requires = [
 
 [project]
 name='naks_library'
-version="0.2.2"
+version="0.2.3"
 description='package for naks projects'
 authors = [
   { name="Gumuev Nazhmutdin", email="gumuevnazhmutdin123@gmail.com" },

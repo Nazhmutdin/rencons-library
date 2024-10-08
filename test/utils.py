@@ -15,11 +15,11 @@ from pydantic import BaseModel, Field
 from faker import Faker
 
 from naks_library import Eq
-from naks_library.testing.fake_data_generator import BaseFakeDataGenerator
 from naks_library.crud_mapper import SqlAlchemyCrudMapper
-from naks_library.base_db_service import BaseDBService
-from naks_library.base_shema import BaseShema
+from naks_library.utils.funcs import seq
+from naks_library import BaseShema
 from naks_library.selector_filters import AbstractFilter, EqualFilter, ILikeAnyFilter, ILikeFilter, InFilter, FromFilter, BeforeFilter, LikeFilter, LikeAnyFilter
+from naks_library.interactors import BaseGetInteractor, BaseCreateInteractor, BaseDeleteInteractor, BaseUpdateInteractor
 
 
 DB_URL = "postgresql+asyncpg://{0}:{1}@{2}:{3}/{4}".format(
@@ -246,6 +246,26 @@ class UpdateAShema(BaseModel):
     foo5: float | None = Field(default=None)
     foo6: str | None = Field(default=None)
 
+@dataclass
+class CreateADTO:
+    ident: uuid.UUID
+    foo1: float
+    foo2: str
+    foo3: date
+    foo4: date
+    foo5: float
+    foo6: str
+
+
+@dataclass
+class UpdateADTO:
+    foo1: float | None
+    foo2: str | None
+    foo3: date | None
+    foo4: date | None
+    foo5: float | None
+    foo6: str | None
+
 
 class SelectAShema(BaseShema):
     idents: list[uuid.UUID] | None = Field(default=None)
@@ -306,25 +326,31 @@ def filter_data[DTO](filters: SelectAShema, all_data: list[DTO]) -> list[DTO]:
             all_data = [el for el in all_data if filter_arg in str.lower(getattr(el, map_arg.column.key))]
 
 
-class ADBService(BaseDBService[AData, AModel, SelectAShema, CreateAShema, UpdateAShema]):
-
-    def __init__(self) -> None:
-        super().__init__(
-            AData, 
-            AModel, 
-            A_FILTERS_MAP, 
-            A_SELECT_ATTRS, 
-            A_SELECT_FROM_ATTRS, 
-            A_AND_SELECT_COLUMNS, 
-            A_OR_SELECT_COLUMNS
-        )
-
-
-class ACrudMapper(SqlAlchemyCrudMapper[AData, CreateAShema, UpdateAShema]):
+class ACrudMapper(SqlAlchemyCrudMapper[AData, CreateADTO, UpdateADTO]):
     __model__ = AModel
 
     def _convert(self, row: sa.Row[t.Any]) -> AData:
         return AData(**row.__dict__)
+    
+
+class GetAInteractor(BaseGetInteractor): ...
+class CreateAInteractor(BaseCreateInteractor): ...
+class UpdateAInteractor(BaseUpdateInteractor): ...
+class DeleteAInteractor(BaseDeleteInteractor): ...
+
+
+class BaseFakeDataGenerator[T]:
+    faker = Faker()
+
+    def generate() -> list[T]: ...
+
+
+    def gen_random_date(self, start: date, end: date) -> date:
+        return self.faker.date_between(start, end)
+
+
+    def gen_random_float(self, start: float, end: float, step: float) -> float:
+        return self.faker.random_element(seq(start, end, step))
 
 
 class FakeADataGenerator(BaseFakeDataGenerator):
