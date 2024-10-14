@@ -29,7 +29,7 @@ class TestInteractors:
     async def test_update_interactor(self): 
         session, commiter, mapper = get_mapper_commiter()
 
-        get_a = GetAInteractor(mapper, commiter)
+        get_a = GetAInteractor(mapper)
         update_a = UpdateAInteractor(mapper, commiter)
 
         data = test_data.get_random_a()
@@ -49,7 +49,7 @@ class TestInteractors:
     async def test_get_interactor(self): 
         session, commiter, mapper = get_mapper_commiter()
 
-        get_a = GetAInteractor(mapper, commiter)
+        get_a = GetAInteractor(mapper)
 
         data = test_data.get_random_a()
 
@@ -62,7 +62,7 @@ class TestInteractors:
         session, commiter, mapper = get_mapper_commiter()
 
         delete_a = DeleteAInteractor(mapper, commiter)
-        get_a = GetAInteractor(mapper, commiter)
+        get_a = GetAInteractor(mapper)
 
         data = test_data.get_random_a()
 
