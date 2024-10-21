@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-import typing as t
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -54,7 +53,7 @@ class SqlAlchemyCrudMapper[DTO, CreateDTO, UpdateDTO](ABC, SqlAlchemySessionInit
 
         res = (await self.session.execute(stmt)).scalars().all()
 
-        return [self._convert(**el[0].__dict__) for el in res]
+        return [self._convert(el) for el in res]
  
 
     async def count(self, create_stmt: IGetManyStmtCreator, filters: FilterArgsDict = {}) -> int:
@@ -89,5 +88,5 @@ class SqlAlchemyCrudMapper[DTO, CreateDTO, UpdateDTO](ABC, SqlAlchemySessionInit
 
 
     @abstractmethod
-    def _convert(self, row: sa.Row[t.Any]) -> DTO:
+    def _convert(self, data: _Model) -> DTO:
         pass
