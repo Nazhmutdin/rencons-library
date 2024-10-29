@@ -2,7 +2,7 @@ import typing as t
 
 from sqlalchemy import BinaryExpression, Select, select
 
-from naks_library._types import _Model, FilterArgsDict, FiltersMapType, SelectAttrsType, SelectFromAttrsType
+from naks_library._types import _Model, FilterArgsDict, FiltersMapType, SelectAttrsType, SelectFromAttrsType, OrderByAttrs
 
 
 class IGetManyStmtCreator[T: _Model](t.Protocol):
@@ -18,11 +18,13 @@ class StandartSqlAlchemyGetManyStmtCreator:
             self,
             filters_map: FiltersMapType,
             select_attrs: SelectAttrsType, 
-            select_from_attrs: SelectFromAttrsType 
+            select_from_attrs: SelectFromAttrsType,
+            order_by_attrs: OrderByAttrs | None = None
         ) -> None:
         self._filters_map = filters_map
         self.select_attrs = select_attrs
         self.select_from_attrs = select_from_attrs
+        self.order_by_attrs = order_by_attrs
     
 
     def __call__(self, filter_args: FilterArgsDict):
@@ -31,8 +33,12 @@ class StandartSqlAlchemyGetManyStmtCreator:
             *self.select_from_attrs
         )
 
+        if self.order_by_attrs:
+            stmt = stmt.order_by(*self.order_by_attrs)
+
+
         if filter_args:
-            return stmt.where(
+            stmt = stmt.where(
                 *self._get_binary_expressions(filter_args)
             )
         

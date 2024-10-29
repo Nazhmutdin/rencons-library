@@ -1,7 +1,7 @@
 import typing as t
 
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy import ColumnClause, FromClause
+from sqlalchemy import ColumnClause, FromClause, UnaryExpression
 
 from naks_library.common import BaseSelectShema
 from naks_library.selector_filters import AbstractFilter
@@ -12,6 +12,7 @@ type FilterArgsDict = dict[str, t.Any]
 type FiltersMapType = dict[FiltersMapKey, AbstractFilter]
 type SelectAttrsType = list[ColumnClause]
 type SelectFromAttrsType = list[FromClause]
+type OrderByAttrs = list[ColumnClause | UnaryExpression]
 
 _CreateDTO = t.TypeVar("_CreateDTO")
 _UpdateDTO = t.TypeVar("_UpdateDTO")

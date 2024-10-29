@@ -1,9 +1,8 @@
 from pydantic import BaseModel, ConfigDict, AliasGenerator, Field
+from pydantic.alias_generators import to_camel
 
-from naks_library.utils.funcs import from_snake_case_to_lower_camel_case
 
-
-camel_case_serialization_alias_generator = AliasGenerator(serialization_alias=from_snake_case_to_lower_camel_case)
+camel_case_alias_generator = AliasGenerator(alias=to_camel)
 
 
 class BaseShema(BaseModel):
@@ -13,7 +12,7 @@ class BaseShema(BaseModel):
         arbitrary_types_allowed=True,
         validate_assignment=True,
         revalidate_instances="always",
-        alias_generator=camel_case_serialization_alias_generator
+        alias_generator=camel_case_alias_generator
     )
 
 

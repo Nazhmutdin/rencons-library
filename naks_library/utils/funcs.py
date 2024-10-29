@@ -58,8 +58,3 @@ def to_uuid(v: str | UUID) -> UUID:
         return v
     
     return UUID(v)
-
-
-def from_snake_case_to_lower_camel_case(string: str) -> str:
-    upper = "".join(word.capitalize() for word in string.split("_"))
-    return upper[:1].lower() + upper[1:]
