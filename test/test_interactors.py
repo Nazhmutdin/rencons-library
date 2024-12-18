@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 import pytest
 
-from naks_library.commiter import SqlAlchemyCommitter
+from naks_library.committer import SqlAlchemyCommitter
 from utils import GetAInteractor, CreateAInteractor, UpdateAInteractor, DeleteAInteractor, ACrudMapper, AData, UpdateADTO, engine, test_data
 
 
