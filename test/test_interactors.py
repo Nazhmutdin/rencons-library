@@ -5,32 +5,32 @@ from naks_library.committer import SqlAlchemyCommitter
 from utils import GetAInteractor, CreateAInteractor, UpdateAInteractor, DeleteAInteractor, ACrudMapper, AData, UpdateADTO, engine, test_data
 
 
-def get_mapper_commiter() -> tuple[AsyncSession, SqlAlchemyCommitter, ACrudMapper]:
+def get_mapper_committer() -> tuple[AsyncSession, SqlAlchemyCommitter, ACrudMapper]:
     session = AsyncSession(engine)
-    commiter = SqlAlchemyCommitter(session)
+    committer = SqlAlchemyCommitter(session)
 
     crud_mapper = ACrudMapper(session)
 
-    return session, commiter, crud_mapper
+    return session, committer, crud_mapper
 
 
 @pytest.mark.asyncio
 class TestInteractors:
 
     async def test_create_interactor(self): 
-        session, commiter, mapper = get_mapper_commiter()
+        session, committer, mapper = get_mapper_committer()
 
-        create_a = CreateAInteractor(mapper, commiter)
+        create_a = CreateAInteractor(mapper, committer)
 
         for data in test_data.fake_a:
             await create_a(data)
 
 
     async def test_update_interactor(self): 
-        session, commiter, mapper = get_mapper_commiter()
+        session, committer, mapper = get_mapper_committer()
 
         get_a = GetAInteractor(mapper)
-        update_a = UpdateAInteractor(mapper, commiter)
+        update_a = UpdateAInteractor(mapper, committer)
 
         data = test_data.get_random_a()
         update_data = test_data.fake_a_generator.generate(1)[0]
@@ -47,7 +47,7 @@ class TestInteractors:
 
 
     async def test_get_interactor(self): 
-        session, commiter, mapper = get_mapper_commiter()
+        session, committer, mapper = get_mapper_committer()
 
         get_a = GetAInteractor(mapper)
 
@@ -59,9 +59,9 @@ class TestInteractors:
 
 
     async def test_delete_interactor(self): 
-        session, commiter, mapper = get_mapper_commiter()
+        session, committer, mapper = get_mapper_committer()
 
-        delete_a = DeleteAInteractor(mapper, commiter)
+        delete_a = DeleteAInteractor(mapper, committer)
         get_a = GetAInteractor(mapper)
 
         data = test_data.get_random_a()

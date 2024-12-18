@@ -13,16 +13,16 @@ class BaseCreateInteractor[T: _CreateDTO]:
     def __init__(
         self,
         gateway: _Gateway,
-        commiter: ICommitter
+        committer: ICommitter
     ):
         self.gateway = gateway
-        self.commiter = commiter
+        self.committer = committer
 
     
     async def __call__(self, data: T):
         await self.gateway.insert(data)
 
-        await self.commiter.commit()
+        await self.committer.commit()
 
 
 class BaseGetInteractor[T: _DTO]:
@@ -70,29 +70,29 @@ class BaseUpdateInteractor[T: _UpdateDTO]:
     def __init__(
         self,
         gateway: _Gateway,
-        commiter: ICommitter
+        committer: ICommitter
     ):
         self.gateway = gateway
-        self.commiter = commiter
+        self.committer = committer
 
 
     async def __call__(self, ident: UUID, data: T):
         await self.gateway.update(ident, data)
 
-        await self.commiter.commit()
+        await self.committer.commit()
 
 
 class BaseDeleteInteractor:
     def __init__(
         self,
         gateway: _Gateway,
-        commiter: ICommitter
+        committer: ICommitter
     ):
         self.gateway = gateway
-        self.commiter = commiter
+        self.committer = committer
 
     
     async def __call__(self, ident: UUID):
         await self.gateway.delete(ident)
 
-        await self.commiter.commit()
+        await self.committer.commit()
