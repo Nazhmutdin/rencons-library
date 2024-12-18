@@ -4,7 +4,7 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 import sqlalchemy as sa
 
-from naks_library._types import _Model, FilterArgsDict
+from naks_library._types import _Model
 from naks_library.common.get_many_stmt_creator import IGetManyStmtCreator
 
 
@@ -21,14 +21,19 @@ class SqlAlchemyCrudMapper[DTO, CreateDTO, UpdateDTO](ABC, SqlAlchemySessionInit
         stmt = sa.insert(self.__model__).values(**data.__dict__)
 
         await self.session.execute(stmt)
+    
+
+    async def get_by(
+        self,
+        filter: sa.ColumnElement
+    ):
+        stmt = sa.select(self.__model__).where(filter)
+
+        return (await self.session.execute(stmt))
 
 
     async def get(self, ident: UUID) -> DTO | None:
-        stmt = sa.select(self.__model__).where(
-            self.ident_column == ident
-        )
-
-        result = (await self.session.execute(stmt)).scalars().one_or_none()
+        result = (await self.get_by(self.ident_column == ident)).scalars().one_or_none()
 
         if result:
             return self._convert(result)
@@ -41,7 +46,7 @@ class SqlAlchemyCrudMapper[DTO, CreateDTO, UpdateDTO](ABC, SqlAlchemySessionInit
         create_stmt: IGetManyStmtCreator,
         limit: int | None, 
         offset: int | None, 
-        filters: FilterArgsDict = {}
+        filters: dict = {}
     ) -> list[DTO]:
         stmt = create_stmt(filters)
 
@@ -56,7 +61,7 @@ class SqlAlchemyCrudMapper[DTO, CreateDTO, UpdateDTO](ABC, SqlAlchemySessionInit
         return [self._convert(el) for el in res]
  
 
-    async def count(self, create_stmt: IGetManyStmtCreator, filters: FilterArgsDict = {}) -> int:
+    async def count(self, create_stmt: IGetManyStmtCreator, filters: dict = {}) -> int:
         stmt = create_stmt(filters)
 
         stmt = sa.select(sa.func.count()).select_from(

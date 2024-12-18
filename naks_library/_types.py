@@ -8,7 +8,6 @@ from naks_library.selector_filters import AbstractFilter
 
 
 type FiltersMapKey = str
-type FilterArgsDict = dict[str, t.Any]
 type FiltersMapType = dict[FiltersMapKey, AbstractFilter]
 type SelectAttrsType = list[ColumnClause]
 type SelectFromAttrsType = list[FromClause]

@@ -2,13 +2,13 @@ import typing as t
 
 from sqlalchemy import BinaryExpression, Select, select
 
-from naks_library._types import _Model, FilterArgsDict, FiltersMapType, SelectAttrsType, SelectFromAttrsType, OrderByAttrs
+from naks_library._types import _Model, FiltersMapType, SelectAttrsType, SelectFromAttrsType, OrderByAttrs
 
 
 class IGetManyStmtCreator[T: _Model](t.Protocol):
     def __call__(
         self, 
-        filter_args: FilterArgsDict
+        filter_args: dict
     ) -> Select[T]: ...
 
 
@@ -27,7 +27,7 @@ class StandartSqlAlchemyGetManyStmtCreator:
         self.order_by_attrs = order_by_attrs
     
 
-    def __call__(self, filter_args: FilterArgsDict):
+    def __call__(self, filter_args: dict):
 
         stmt = select(*self.select_attrs).distinct().select_from(
             *self.select_from_attrs
@@ -45,7 +45,7 @@ class StandartSqlAlchemyGetManyStmtCreator:
         return stmt
     
 
-    def _get_binary_expressions(self, filter_args: FilterArgsDict) -> list[BinaryExpression]:
+    def _get_binary_expressions(self, filter_args: dict) -> list[BinaryExpression]:
         expressions = []
 
         for arg_key, arg_value in filter_args.items():

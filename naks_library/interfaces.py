@@ -1,12 +1,8 @@
-from typing import Protocol, TypeVar
+from typing import Protocol
 from abc import abstractmethod
 from uuid import UUID
 
-from naks_library._types import FilterArgsDict, _DTO, _CreateDTO, _UpdateDTO
 from naks_library.common.get_many_stmt_creator import IGetManyStmtCreator
-
-
-_Gateway = TypeVar("_Gateway", bound="ICrudGateway[_DTO, _CreateDTO, _UpdateDTO]")
 
 
 class ICommitter(Protocol):
@@ -37,14 +33,14 @@ class ICrudGateway[DTO, CreateDTO, UpdateDTO](Protocol):
         create_stmt: IGetManyStmtCreator,
         limit: int | None, 
         offset: int | None, 
-        filters: FilterArgsDict = {}
+        filters: dict = {}
     ) -> list[DTO]: ...
 
 
     async def count(
         self, 
         create_stmt: IGetManyStmtCreator,
-        filters: FilterArgsDict = {}
+        filters: dict = {}
     ) -> int: ...
 
 

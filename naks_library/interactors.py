@@ -1,8 +1,12 @@
 from uuid import UUID
+from typing import TypeVar
 
-from naks_library.interfaces import ICommitter, _Gateway
-from naks_library._types import _CreateDTO, _UpdateDTO, _DTO, FilterArgsDict
+from naks_library.interfaces import ICommitter, ICrudGateway
+from naks_library._types import _CreateDTO, _UpdateDTO, _DTO
 from naks_library.common.get_many_stmt_creator import IGetManyStmtCreator
+
+
+_Gateway = TypeVar("_Gateway", bound=ICrudGateway)
 
 
 class BaseCreateInteractor[T: _CreateDTO]:
@@ -45,7 +49,7 @@ class BaseSelectInteractor[T: _DTO]:
         self.gateway = gateway
 
 
-    async def __call__(self, filters: FilterArgsDict | None, limit: int | None, offset: int | None) -> tuple[list[T], int]:
+    async def __call__(self, filters: dict | None, limit: int | None, offset: int | None) -> tuple[list[T], int]:
 
         res = await self.gateway.get_many(
             create_stmt=self.create_stmt,

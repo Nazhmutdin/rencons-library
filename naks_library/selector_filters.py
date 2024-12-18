@@ -30,6 +30,13 @@ class ILikeFilter(AbstractFilter):
         return self.column.ilike(f"%{arg}%")
 
 
+class AnyFilter(AbstractFilter):
+
+    def dump_expression(self, arg: t.Iterable[str]) -> sa.BinaryExpression:
+
+        return self.column.any_([f"%{el}%" for el in arg])
+
+
 class LikeAnyFilter(AbstractFilter):
 
     def dump_expression(self, arg: t.Iterable[str]) -> sa.BinaryExpression:

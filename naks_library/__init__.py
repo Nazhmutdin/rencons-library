@@ -1,4 +1,4 @@
-from naks_library.commiter import SqlAlchemyCommitter
+from naks_library.committer import SqlAlchemyCommitter
 from naks_library.crud_mapper import SqlAlchemySessionInitializer, SqlAlchemyCrudMapper
 from naks_library.interfaces import ICrudGateway, ICommitter
 from naks_library.common import BaseShema, BaseSelectShema
