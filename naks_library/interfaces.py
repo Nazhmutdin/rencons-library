@@ -19,7 +19,7 @@ class ICommitter(Protocol):
     async def rollback(self): ...
 
 
-class ICrudGateway[DTO, CreateDTO, UpdateDTO](Protocol):
+class ICrudGateway[DTO, CreateDTO](Protocol):
     @abstractmethod
     async def insert(self, data: CreateDTO): ...
 
@@ -45,7 +45,7 @@ class ICrudGateway[DTO, CreateDTO, UpdateDTO](Protocol):
 
 
     @abstractmethod
-    async def update(self, ident: UUID | str, data: UpdateDTO): ...
+    async def update(self, ident: UUID | str, data: dict): ...
 
 
     @abstractmethod

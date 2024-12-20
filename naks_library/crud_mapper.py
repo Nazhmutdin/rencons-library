@@ -13,7 +13,7 @@ class SqlAlchemySessionInitializer:
         self.session = session
 
 
-class SqlAlchemyCrudMapper[DTO, CreateDTO, UpdateDTO](ABC, SqlAlchemySessionInitializer):
+class SqlAlchemyCrudMapper[DTO, CreateDTO](ABC, SqlAlchemySessionInitializer):
     __model__: type[_Model]
 
 
@@ -71,10 +71,10 @@ class SqlAlchemyCrudMapper[DTO, CreateDTO, UpdateDTO](ABC, SqlAlchemySessionInit
         return (await self.session.execute(stmt)).scalar_one()
 
 
-    async def update(self, ident: UUID | str, data: UpdateDTO):
+    async def update(self, ident: UUID | str, data: dict):
         stmt = sa.update(self.__model__).where(
             self.ident_column == ident
-        ).values(**data.__dict__)
+        ).values(**data)
 
         await self.session.execute(stmt)
 

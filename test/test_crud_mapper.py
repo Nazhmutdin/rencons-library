@@ -49,7 +49,7 @@ class TestSqlAlchemyCrudMapper:
 
         updated_data = data.__dict__ | update_data
 
-        await crud_mapper.update(data.ident, UpdateADTO(**update_data))
+        await crud_mapper.update(data.ident, UpdateADTO(**update_data).__dict__)
 
         assert (await crud_mapper.get(data.ident)) == AData(**updated_data)
 

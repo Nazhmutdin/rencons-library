@@ -39,7 +39,7 @@ class TestInteractors:
 
         updated_data = data.__dict__ | update_data
 
-        await update_a(data.ident, UpdateADTO(**update_data))
+        await update_a(data.ident, UpdateADTO(**update_data).__dict__)
 
         assert (await get_a(data.ident)) == AData(**updated_data)
 

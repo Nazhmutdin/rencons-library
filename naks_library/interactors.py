@@ -2,7 +2,7 @@ from uuid import UUID
 from typing import TypeVar
 
 from naks_library.interfaces import ICommitter, ICrudGateway
-from naks_library._types import _CreateDTO, _UpdateDTO, _DTO
+from naks_library._types import _CreateDTO, _DTO
 from naks_library.common.get_many_stmt_creator import IGetManyStmtCreator
 
 
@@ -66,7 +66,7 @@ class BaseSelectInteractor[T: _DTO]:
         return (res, count)
 
 
-class BaseUpdateInteractor[T: _UpdateDTO]:
+class BaseUpdateInteractor:
     def __init__(
         self,
         gateway: _Gateway,
@@ -76,7 +76,7 @@ class BaseUpdateInteractor[T: _UpdateDTO]:
         self.committer = committer
 
 
-    async def __call__(self, ident: UUID, data: T):
+    async def __call__(self, ident: UUID, data: dict):
         await self.gateway.update(ident, data)
 
         await self.committer.commit()

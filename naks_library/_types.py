@@ -14,7 +14,6 @@ type SelectFromAttrsType = list[FromClause]
 type OrderByAttrs = list[ColumnClause | UnaryExpression]
 
 _CreateDTO = t.TypeVar("_CreateDTO")
-_UpdateDTO = t.TypeVar("_UpdateDTO")
 _SelectShema = t.TypeVar("_SelectShema", bound=BaseSelectShema)
 _DTO = t.TypeVar("_DTO")
 
