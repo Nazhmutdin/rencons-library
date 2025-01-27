@@ -77,3 +77,10 @@ class BeforeFilter(AbstractFilter):
     def dump_expression(self, arg: t.Any) -> sa.BinaryExpression:
 
         return self.column < arg
+
+
+class ContainsFilter(AbstractFilter):
+
+    def dump_expression(self, arg: list[t.Any]) -> sa.BinaryExpression:
+
+        return self.column.contains(arg)
