@@ -4,7 +4,7 @@ from datetime import date
 import pytest
 from sqlalchemy import select
 
-from naks_library.common.get_many_stmt_creator import StandartSqlAlchemyGetManyStmtCreator
+from rencons_library.common.get_many_stmt_creator import StandartSqlAlchemyGetManyStmtCreator
 from utils import AModel, BModel, A_SELECT_FROM_ATTRS, A_SELECT_ATTRS
 
 

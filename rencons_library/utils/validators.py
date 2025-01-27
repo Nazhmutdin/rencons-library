@@ -3,8 +3,8 @@ from uuid import UUID
 
 from pydantic import BeforeValidator, PlainSerializer
 
-from naks_library.utils import to_date, to_datetime, to_uuid
-from naks_library import DATE_STRING_FORMAT, DATETIME_STRING_FORMAT
+from rencons_library.utils import to_date, to_datetime, to_uuid
+from rencons_library import DATE_STRING_FORMAT, DATETIME_STRING_FORMAT
 
 
 __all__ = [

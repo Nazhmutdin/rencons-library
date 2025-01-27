@@ -14,12 +14,12 @@ from pydantic import BaseModel, Field
 
 from faker import Faker
 
-from naks_library import Eq
-from naks_library.crud_mapper import SqlAlchemyCrudMapper
-from naks_library.utils.funcs import seq
-from naks_library import BaseShema
-from naks_library.selector_filters import AbstractFilter, EqualFilter, ILikeAnyFilter, ILikeFilter, InFilter, FromFilter, BeforeFilter, LikeFilter, LikeAnyFilter
-from naks_library.interactors import BaseGetInteractor, BaseCreateInteractor, BaseDeleteInteractor, BaseUpdateInteractor
+from rencons_library import Eq
+from rencons_library.crud_mapper import SqlAlchemyCrudMapper
+from rencons_library.utils.funcs import seq
+from rencons_library import BaseShema
+from rencons_library.selector_filters import AbstractFilter, EqualFilter, ILikeAnyFilter, ILikeFilter, InFilter, FromFilter, BeforeFilter, LikeFilter, LikeAnyFilter
+from rencons_library.interactors import BaseGetInteractor, BaseCreateInteractor, BaseDeleteInteractor, BaseUpdateInteractor
 
 
 DB_URL = "postgresql+asyncpg://{0}:{1}@{2}:{3}/{4}".format(

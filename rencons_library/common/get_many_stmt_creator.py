@@ -2,7 +2,7 @@ import typing as t
 
 from sqlalchemy import BinaryExpression, Select, select
 
-from naks_library._types import _Model, FiltersMapType, SelectAttrsType, SelectFromAttrsType, OrderByAttrs
+from rencons_library._types import _Model, FiltersMapType, SelectAttrsType, SelectFromAttrsType, OrderByAttrs
 
 
 class IGetManyStmtCreator[T: _Model](t.Protocol):

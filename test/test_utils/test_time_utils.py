@@ -2,7 +2,7 @@ from datetime import datetime, date
 
 import pytest
 
-from naks_library.utils.time_utils import str_to_datetime, to_datetime, to_date
+from rencons_library.utils.time_utils import str_to_datetime, to_datetime, to_date
 
 
 @pytest.mark.parametrize(

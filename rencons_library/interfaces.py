@@ -2,7 +2,7 @@ from typing import Protocol
 from abc import abstractmethod
 from uuid import UUID
 
-from naks_library.common.get_many_stmt_creator import IGetManyStmtCreator
+from rencons_library.common.get_many_stmt_creator import IGetManyStmtCreator
 
 
 class ICommitter(Protocol):

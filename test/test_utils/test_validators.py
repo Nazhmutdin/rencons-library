@@ -4,7 +4,7 @@ from datetime import datetime, date
 
 from pydantic import BaseModel
 
-from naks_library.utils.validators import (
+from rencons_library.utils.validators import (
     before_date_validator,
     plain_date_serializer,
     before_optional_date_validator,
@@ -18,7 +18,7 @@ from naks_library.utils.validators import (
     plain_uuid_serializer,
     plain_optional_uuid_serializer
 )
-from naks_library import DATE_STRING_FORMAT, DATETIME_STRING_FORMAT
+from rencons_library import DATE_STRING_FORMAT, DATETIME_STRING_FORMAT
 
 
 class PydanticTestModel(BaseModel):

@@ -3,8 +3,8 @@ import typing as t
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import ColumnClause, FromClause, UnaryExpression
 
-from naks_library.common import BaseSelectShema
-from naks_library.selector_filters import AbstractFilter
+from rencons_library.common import BaseSelectShema
+from rencons_library.selector_filters import AbstractFilter
 
 
 type FiltersMapKey = str

@@ -1,7 +1,7 @@
 /venv/
 /build/
 /dist/
-/naks_library.egg-info
+/rencons_library.egg-info
 
 __pycache__/
 .pytest_cache/

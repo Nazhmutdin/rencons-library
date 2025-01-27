@@ -4,8 +4,8 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 import sqlalchemy as sa
 
-from naks_library._types import _Model
-from naks_library.common.get_many_stmt_creator import IGetManyStmtCreator
+from rencons_library._types import _Model
+from rencons_library.common.get_many_stmt_creator import IGetManyStmtCreator
 
 
 class SqlAlchemySessionInitializer:

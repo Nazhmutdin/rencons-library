@@ -1,9 +1,9 @@
 from uuid import UUID
 from typing import TypeVar
 
-from naks_library.interfaces import ICommitter, ICrudGateway
-from naks_library._types import _CreateDTO, _DTO
-from naks_library.common.get_many_stmt_creator import IGetManyStmtCreator
+from rencons_library.interfaces import ICommitter, ICrudGateway
+from rencons_library._types import _CreateDTO, _DTO
+from rencons_library.common.get_many_stmt_creator import IGetManyStmtCreator
 
 
 _Gateway = TypeVar("_Gateway", bound=ICrudGateway)

@@ -1,1 +1,1 @@
-from naks_library.common.root import BaseShema, BaseSelectShema
+from rencons_library.common.root import BaseShema, BaseSelectShema

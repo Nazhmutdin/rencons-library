@@ -1,6 +1,6 @@
 import pytest
 
-from naks_library.common.get_many_stmt_creator import StandartSqlAlchemyGetManyStmtCreator
+from rencons_library.common.get_many_stmt_creator import StandartSqlAlchemyGetManyStmtCreator
 from utils import A_FILTERS_MAP, A_SELECT_ATTRS, A_SELECT_FROM_ATTRS
 
 
