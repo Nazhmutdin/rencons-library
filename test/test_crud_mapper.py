@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import pytest
 
 from rencons_library.committer import SqlAlchemyCommitter
-from utils import ACrudMapper, CreateADTO, UpdateADTO, AData, engine, test_data
+from utils import ACrudMapper, UpdateADTO, AData, engine, test_data
 
 
 def get_mapper_committer() -> tuple[AsyncSession, SqlAlchemyCommitter, ACrudMapper]:
@@ -21,7 +21,7 @@ class TestSqlAlchemyCrudMapper:
         session, committer, crud_mapper = get_mapper_committer()
 
         for data in test_data.fake_a:
-            await crud_mapper.insert(CreateADTO(**data.__dict__))
+            await crud_mapper.insert(data.__dict__)
 
         await committer.commit()
         await session.close()

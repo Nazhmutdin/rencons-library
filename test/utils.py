@@ -326,8 +326,11 @@ def filter_data[DTO](filters: SelectAShema, all_data: list[DTO]) -> list[DTO]:
             all_data = [el for el in all_data if filter_arg in str.lower(getattr(el, map_arg.column.key))]
 
 
-class ACrudMapper(SqlAlchemyCrudMapper[AData, CreateADTO]):
+class ACrudMapper(SqlAlchemyCrudMapper[AData]):
     __model__ = AModel
+
+    def __init__(self, session: AsyncSession):
+        super().__init__(AModel, session)
 
     def _convert(self, row: sa.Row[t.Any]) -> AData:
         return AData(**row.__dict__)
