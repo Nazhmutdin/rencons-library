@@ -2,14 +2,13 @@ from uuid import UUID
 from typing import TypeVar
 
 from rencons_library.interfaces import ICommitter, ICrudGateway
-from rencons_library._types import _CreateDTO, _DTO
 from rencons_library.common.get_many_stmt_creator import IGetManyStmtCreator
 
 
 _Gateway = TypeVar("_Gateway", bound=ICrudGateway)
 
 
-class BaseCreateInteractor[T: _CreateDTO]:
+class BaseCreateInteractor[T]:
     def __init__(
         self,
         gateway: _Gateway,
@@ -20,12 +19,12 @@ class BaseCreateInteractor[T: _CreateDTO]:
 
     
     async def __call__(self, data: T):
-        await self.gateway.insert(data)
+        await self.gateway.insert(data.__dict__)
 
         await self.committer.commit()
 
 
-class BaseGetInteractor[T: _DTO]:
+class BaseGetInteractor[T]:
     def __init__(
         self,
         gateway: _Gateway
@@ -38,7 +37,7 @@ class BaseGetInteractor[T: _DTO]:
         return (await self.gateway.get(ident))
     
 
-class BaseSelectInteractor[T: _DTO]:
+class BaseSelectInteractor[T]:
 
     def __init__(
             self,

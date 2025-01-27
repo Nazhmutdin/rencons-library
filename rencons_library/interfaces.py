@@ -19,13 +19,13 @@ class ICommitter(Protocol):
     async def rollback(self): ...
 
 
-class ICrudGateway[DTO, CreateDTO](Protocol):
+class ICrudGateway[T](Protocol):
     @abstractmethod
-    async def insert(self, data: CreateDTO): ...
+    async def insert(self, data: dict): ...
 
 
     @abstractmethod
-    async def get(self, ident: UUID) -> DTO | None: ...
+    async def get(self, ident: UUID) -> T | None: ...
 
 
     async def get_many(
@@ -34,7 +34,7 @@ class ICrudGateway[DTO, CreateDTO](Protocol):
         limit: int | None, 
         offset: int | None, 
         filters: dict = {}
-    ) -> list[DTO]: ...
+    ) -> list[T]: ...
 
 
     async def count(

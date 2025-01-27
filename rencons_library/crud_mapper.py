@@ -8,17 +8,14 @@ from rencons_library._types import _Model
 from rencons_library.common.get_many_stmt_creator import IGetManyStmtCreator
 
 
-class SqlAlchemySessionInitializer:
-    def __init__(self, session: AsyncSession):
+class SqlAlchemyCrudMapper[T](ABC):
+    def __init__[Model: _Model](self, model: type[Model], session: AsyncSession):
+        self.__model__ = model
         self.session = session
 
 
-class SqlAlchemyCrudMapper[DTO, CreateDTO](ABC, SqlAlchemySessionInitializer):
-    __model__: type[_Model]
-
-
-    async def insert(self, data: CreateDTO):
-        stmt = sa.insert(self.__model__).values(**data.__dict__)
+    async def insert(self, data: dict):
+        stmt = sa.insert(self.__model__).values(**data)
 
         await self.session.execute(stmt)
     
@@ -32,7 +29,7 @@ class SqlAlchemyCrudMapper[DTO, CreateDTO](ABC, SqlAlchemySessionInitializer):
         return (await self.session.execute(stmt))
 
 
-    async def get(self, ident: UUID) -> DTO | None:
+    async def get(self, ident: UUID) -> T | None:
         result = (await self.get_by(self.ident_column == ident)).scalars().one_or_none()
 
         if result:
@@ -47,7 +44,7 @@ class SqlAlchemyCrudMapper[DTO, CreateDTO](ABC, SqlAlchemySessionInitializer):
         limit: int | None, 
         offset: int | None, 
         filters: dict = {}
-    ) -> list[DTO]:
+    ) -> list[T]:
         stmt = create_stmt(filters)
 
         if limit:
@@ -93,5 +90,5 @@ class SqlAlchemyCrudMapper[DTO, CreateDTO](ABC, SqlAlchemySessionInitializer):
 
 
     @abstractmethod
-    def _convert(self, data: _Model) -> DTO:
+    def _convert(self, data: _Model) -> T:
         pass

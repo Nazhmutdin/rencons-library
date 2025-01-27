@@ -1,5 +1,5 @@
 from rencons_library.committer import SqlAlchemyCommitter
-from rencons_library.crud_mapper import SqlAlchemySessionInitializer, SqlAlchemyCrudMapper
+from rencons_library.crud_mapper import SqlAlchemyCrudMapper
 from rencons_library.interfaces import ICrudGateway, ICommitter
 from rencons_library.common import BaseShema, BaseSelectShema
 
