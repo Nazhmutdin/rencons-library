@@ -1,0 +1,1 @@
+from rencons_library.exc.main import PermissionDeniedException
