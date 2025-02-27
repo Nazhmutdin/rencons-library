@@ -5,7 +5,7 @@ from rencons_library.common import BaseShema, BaseSelectShema
 
 
 DATE_STRING_FORMAT = "%d.%m.%Y"
-DATETIME_STRING_FORMAT = "%d.%m.%Y %H:%M:%S.%f%z"
+DATETIME_STRING_FORMAT = "%d.%m.%Y %H:%M:%S.%f"
 
 class Eq:
     def __eq__(self, other) -> bool:
