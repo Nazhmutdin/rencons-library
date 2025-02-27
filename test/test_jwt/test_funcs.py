@@ -13,7 +13,9 @@ def test_read_access_token_payload(jwt_service: JwtService):
         user_ident=uuid4(),
         gen_dt=gen_dt,
         exp_dt=exp_dt,
-        permissions={}
+        permissions={
+            "ident": uuid4()
+        }
     )
 
     assert read_access_token_payload(jwt_service.create_access_token(**payload)) == payload

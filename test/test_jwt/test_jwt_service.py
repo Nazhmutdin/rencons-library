@@ -15,7 +15,9 @@ class TestJwtService:
             user_ident=uuid4(),
             gen_dt=gen_dt,
             exp_dt=exp_dt,
-            permissions={}
+            permissions={
+                "ident": uuid4()
+            }
         )
 
 
@@ -25,19 +27,16 @@ class TestJwtService:
         gen_dt = datetime.now()
         exp_dt = gen_dt + timedelta(minutes=15)
 
-        access_token = jwt_service.create_access_token(
-            user_ident=ident,
-            gen_dt=gen_dt,
-            exp_dt=exp_dt,
-            permissions={}
-        )
-
         payload = {
             "user_ident": ident,
             "gen_dt": gen_dt,
             "exp_dt": exp_dt,
-            "permissions": {}
+            "permissions": {
+                "ident": uuid4()
+            }
         }
+
+        access_token = jwt_service.create_access_token(**payload)
 
         assert jwt_service.read_access_token(access_token) == payload
 
