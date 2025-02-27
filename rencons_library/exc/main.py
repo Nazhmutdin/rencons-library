@@ -1,4 +1,4 @@
 
-class PermissionDeniedException(Exception):
-    def __init__(self, message: str):
-        self.message = message
+class AccessForbiddenException(Exception): 
+    def __init__(self, code: str = "access_forbidden") -> None:
+        self.code = code
