@@ -103,6 +103,7 @@ class JwtService:
         
         payload["user_ident"] = payload["user_ident"].hex
         payload["permissions"]["ident"] = payload["permissions"]["ident"].hex
+        del payload["permissions"]["user_ident"]
         
         return self.encode(
             payload=payload
