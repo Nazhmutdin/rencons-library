@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rencons-library"
-version = "0.2.6"
+version = "0.3.0"
 description = ""
 authors = ["Nazhmutdin <gumuevnazhmutdin1248@gmail.com>"]
 packages = [{include = "rencons_library"}]
