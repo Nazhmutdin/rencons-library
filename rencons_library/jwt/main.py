@@ -13,6 +13,8 @@ class PermissionDict(TypedDict):
     user_ident: UUID
 
     is_super_user: bool
+    
+    projects: list[str] | None
 
     personal_data_get: bool
     personal_data_create: bool
