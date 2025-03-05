@@ -14,7 +14,7 @@ class PermissionDict(TypedDict):
 
     is_super_user: bool
     
-    projects: list[str] | None
+    projects: list[str]
 
     personal_data_get: bool
     personal_data_create: bool
