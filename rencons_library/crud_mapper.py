@@ -14,10 +14,10 @@ class SqlAlchemyCrudMapper[T](ABC):
         self.session = session
 
 
-    async def insert(self, data: dict):
-        stmt = sa.insert(self.__model__).values(**data)
+    async def insert(self, data: dict) -> T:
+        stmt = sa.insert(self.__model__).values(**data).returning(self.__model__)
 
-        await self.session.execute(stmt)
+        return self._convert((await self.session.execute(stmt)).scalars().one_or_none())
     
 
     async def get_by(
@@ -68,12 +68,12 @@ class SqlAlchemyCrudMapper[T](ABC):
         return (await self.session.execute(stmt)).scalar_one()
 
 
-    async def update(self, ident: UUID | str, data: dict):
+    async def update(self, ident: UUID | str, data: dict) -> T:
         stmt = sa.update(self.__model__).where(
             self.ident_column == ident
-        ).values(**data)
+        ).values(**data).returning(self.__model__)
 
-        await self.session.execute(stmt)
+        return self._convert((await self.session.execute(stmt)).scalars().one_or_none())
 
 
     async def delete(self, ident: UUID):
