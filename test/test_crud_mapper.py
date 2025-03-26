@@ -21,7 +21,7 @@ class TestSqlAlchemyCrudMapper:
         for data in test_data.fake_a:
             res = await crud_mapper.insert(data.__dict__)
 
-            assert res == test_data.fake_a
+            assert res == data
 
         await committer.commit()
         await session.close()
