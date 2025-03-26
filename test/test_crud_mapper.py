@@ -19,7 +19,9 @@ class TestSqlAlchemyCrudMapper:
         session, committer, crud_mapper = get_mapper_committer(session)
 
         for data in test_data.fake_a:
-            await crud_mapper.insert(data.__dict__)
+            res = await crud_mapper.insert(data.__dict__)
+
+            assert res == test_data.fake_a
 
         await committer.commit()
         await session.close()
@@ -49,9 +51,9 @@ class TestSqlAlchemyCrudMapper:
 
         updated_data = data.__dict__ | update_data
 
-        await crud_mapper.update(data.ident, UpdateADTO(**update_data).__dict__)
+        res = await crud_mapper.update(data.ident, UpdateADTO(**update_data).__dict__)
 
-        assert (await crud_mapper.get(data.ident)) == AData(**updated_data)
+        assert res == AData(**updated_data)
 
         await committer.commit()
         await session.close()
