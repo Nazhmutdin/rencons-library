@@ -2,11 +2,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import pytest
 
 from rencons_library.committer import SqlAlchemyCommitter
-from utils import ACrudMapper, UpdateADTO, AData, engine, test_data
+from utils import ACrudMapper, UpdateADTO, AData, test_data
 
 
-def get_mapper_committer() -> tuple[AsyncSession, SqlAlchemyCommitter, ACrudMapper]:
-    session = AsyncSession(engine)
+def get_mapper_committer(session: AsyncSession) -> tuple[AsyncSession, SqlAlchemyCommitter, ACrudMapper]:
     committer = SqlAlchemyCommitter(session)
 
     crud_mapper = ACrudMapper(session)
@@ -14,11 +13,10 @@ def get_mapper_committer() -> tuple[AsyncSession, SqlAlchemyCommitter, ACrudMapp
     return session, committer, crud_mapper
 
 
-@pytest.mark.asyncio
 class TestSqlAlchemyCrudMapper:
-
-    async def test_insert(self):
-        session, committer, crud_mapper = get_mapper_committer()
+    @pytest.mark.anyio
+    async def test_insert(self, session: AsyncSession):
+        session, committer, crud_mapper = get_mapper_committer(session)
 
         for data in test_data.fake_a:
             await crud_mapper.insert(data.__dict__)
@@ -26,9 +24,10 @@ class TestSqlAlchemyCrudMapper:
         await committer.commit()
         await session.close()
 
-    
-    async def test_get(self):
-        session, committer, crud_mapper = get_mapper_committer()
+
+    @pytest.mark.anyio
+    async def test_get(self, session: AsyncSession):
+        session, committer, crud_mapper = get_mapper_committer(session)
 
         data = test_data.get_random_a()
 
@@ -39,8 +38,9 @@ class TestSqlAlchemyCrudMapper:
         await session.close()
 
 
-    async def test_update(self): 
-        session, committer, crud_mapper = get_mapper_committer()
+    @pytest.mark.anyio
+    async def test_update(self, session: AsyncSession): 
+        session, committer, crud_mapper = get_mapper_committer(session)
 
         data = test_data.get_random_a()
         update_data = test_data.fake_a_generator.generate(1)[0]
@@ -57,8 +57,9 @@ class TestSqlAlchemyCrudMapper:
         await session.close()
     
 
-    async def test_delete(self):
-        session, committer, crud_mapper = get_mapper_committer()
+    @pytest.mark.anyio
+    async def test_delete(self, session: AsyncSession):
+        session, committer, crud_mapper = get_mapper_committer(session)
 
         data = test_data.get_random_a()
 

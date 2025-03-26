@@ -2,11 +2,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import pytest
 
 from rencons_library.committer import SqlAlchemyCommitter
-from utils import GetAInteractor, CreateAInteractor, UpdateAInteractor, DeleteAInteractor, ACrudMapper, AData, UpdateADTO, engine, test_data
+from utils import GetAInteractor, CreateAInteractor, UpdateAInteractor, DeleteAInteractor, ACrudMapper, AData, UpdateADTO, test_data
 
 
-def get_mapper_committer() -> tuple[AsyncSession, SqlAlchemyCommitter, ACrudMapper]:
-    session = AsyncSession(engine)
+def get_mapper_committer(session: AsyncSession) -> tuple[AsyncSession, SqlAlchemyCommitter, ACrudMapper]:
     committer = SqlAlchemyCommitter(session)
 
     crud_mapper = ACrudMapper(session)
@@ -14,11 +13,11 @@ def get_mapper_committer() -> tuple[AsyncSession, SqlAlchemyCommitter, ACrudMapp
     return session, committer, crud_mapper
 
 
-@pytest.mark.asyncio
 class TestInteractors:
 
-    async def test_create_interactor(self): 
-        session, committer, mapper = get_mapper_committer()
+    @pytest.mark.anyio
+    async def test_create_interactor(self, session: AsyncSession): 
+        session, committer, mapper = get_mapper_committer(session)
 
         create_a = CreateAInteractor(mapper, committer)
 
@@ -26,8 +25,9 @@ class TestInteractors:
             await create_a(data)
 
 
-    async def test_update_interactor(self): 
-        session, committer, mapper = get_mapper_committer()
+    @pytest.mark.anyio
+    async def test_update_interactor(self, session: AsyncSession): 
+        session, committer, mapper = get_mapper_committer(session)
 
         get_a = GetAInteractor(mapper)
         update_a = UpdateAInteractor(mapper, committer)
@@ -46,8 +46,9 @@ class TestInteractors:
         await session.close()
 
 
-    async def test_get_interactor(self): 
-        session, committer, mapper = get_mapper_committer()
+    @pytest.mark.anyio
+    async def test_get_interactor(self, session: AsyncSession): 
+        session, committer, mapper = get_mapper_committer(session)
 
         get_a = GetAInteractor(mapper)
 
@@ -58,8 +59,9 @@ class TestInteractors:
         await session.close()
 
 
-    async def test_delete_interactor(self): 
-        session, committer, mapper = get_mapper_committer()
+    @pytest.mark.anyio
+    async def test_delete_interactor(self, session: AsyncSession): 
+        session, committer, mapper = get_mapper_committer(session)
 
         delete_a = DeleteAInteractor(mapper, committer)
         get_a = GetAInteractor(mapper)

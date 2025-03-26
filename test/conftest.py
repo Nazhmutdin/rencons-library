@@ -1,6 +1,7 @@
 import os
 
 import pytest
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from utils import ADict, BDict, AData, BData, Base, test_data, engine
 from asyncio import run
@@ -16,6 +17,12 @@ def prepare_db():
             await conn.run_sync(Base.metadata.create_all)
 
     run(start_db())
+
+
+@pytest.fixture
+async def session():
+    async with AsyncSession(engine) as session: 
+        yield session
 
 
 @pytest.fixture
@@ -36,3 +43,8 @@ def fake_b_dicts() -> list[BDict]:
 @pytest.fixture
 def fake_b() -> list[BData]:
     return test_data.fake_b
+
+
+@pytest.fixture(scope="session")
+def anyio_backend():
+    return "asyncio"
