@@ -14,7 +14,8 @@ def test_read_access_token_payload(jwt_service: JwtService):
         gen_dt=gen_dt,
         exp_dt=exp_dt,
         permissions={
-            "ident": uuid4()
+            "ident": uuid4(),
+            "user_ident": uuid4()
         }
     )
 

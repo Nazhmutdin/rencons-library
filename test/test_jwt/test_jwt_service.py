@@ -16,7 +16,8 @@ class TestJwtService:
             gen_dt=gen_dt,
             exp_dt=exp_dt,
             permissions={
-                "ident": uuid4()
+                "ident": uuid4(),
+                "user_ident": uuid4()
             }
         )
 
@@ -32,7 +33,8 @@ class TestJwtService:
             "gen_dt": gen_dt,
             "exp_dt": exp_dt,
             "permissions": {
-                "ident": uuid4()
+                "ident": uuid4(),
+                "user_ident": uuid4()
             }
         }
 
