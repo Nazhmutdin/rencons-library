@@ -21,7 +21,7 @@ class ICommitter(Protocol):
 
 class ICrudGateway[T](Protocol):
     @abstractmethod
-    async def insert(self, data: dict) -> T: ...
+    async def insert(self, data: dict) -> T | None: ...
 
 
     @abstractmethod
@@ -45,7 +45,7 @@ class ICrudGateway[T](Protocol):
 
 
     @abstractmethod
-    async def update(self, ident: UUID | str, data: dict) -> T: ...
+    async def update(self, ident: UUID | str, data: dict) -> T | None: ...
 
 
     @abstractmethod

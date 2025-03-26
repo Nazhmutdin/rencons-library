@@ -1,33 +1,31 @@
 from uuid import UUID
-from typing import TypeVar
 
 from rencons_library.interfaces import ICommitter, ICrudGateway
 from rencons_library.common.get_many_stmt_creator import IGetManyStmtCreator
 
 
-_Gateway = TypeVar("_Gateway", bound=ICrudGateway)
-
-
 class BaseCreateInteractor[T]:
     def __init__(
         self,
-        gateway: _Gateway,
+        gateway: ICrudGateway[T],
         committer: ICommitter
     ):
         self.gateway = gateway
         self.committer = committer
 
     
-    async def __call__(self, data: T):
-        await self.gateway.insert(data.__dict__)
+    async def __call__(self, data: T) -> T | None:
+        res = await self.gateway.insert(data.__dict__)
 
         await self.committer.commit()
+
+        return res
 
 
 class BaseGetInteractor[T]:
     def __init__(
         self,
-        gateway: _Gateway
+        gateway: ICrudGateway[T]
     ):
         self.gateway = gateway
 
@@ -42,7 +40,7 @@ class BaseSelectInteractor[T]:
     def __init__(
             self,
             create_stmt: IGetManyStmtCreator,
-            gateway: _Gateway
+            gateway: ICrudGateway[T]
         ) -> None:
         self.create_stmt = create_stmt
         self.gateway = gateway
@@ -65,10 +63,10 @@ class BaseSelectInteractor[T]:
         return (res, count)
 
 
-class BaseUpdateInteractor:
+class BaseUpdateInteractor[T]:
     def __init__(
         self,
-        gateway: _Gateway,
+        gateway: ICrudGateway[T],
         committer: ICommitter
     ):
         self.gateway = gateway
@@ -76,15 +74,17 @@ class BaseUpdateInteractor:
 
 
     async def __call__(self, ident: UUID, data: dict):
-        await self.gateway.update(ident, data)
+        res = await self.gateway.update(ident, data)
 
         await self.committer.commit()
+
+        return res
 
 
 class BaseDeleteInteractor:
     def __init__(
         self,
-        gateway: _Gateway,
+        gateway: ICrudGateway,
         committer: ICommitter
     ):
         self.gateway = gateway

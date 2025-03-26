@@ -9,15 +9,18 @@ from rencons_library.common.get_many_stmt_creator import IGetManyStmtCreator
 
 
 class SqlAlchemyCrudMapper[T](ABC):
-    def __init__[Model: _Model](self, model: type[Model], session: AsyncSession):
+    def __init__[Model](self, model: type[Model], session: AsyncSession):
         self.__model__ = model
         self.session = session
 
 
-    async def insert(self, data: dict) -> T:
+    async def insert(self, data: dict):
         stmt = sa.insert(self.__model__).values(**data).returning(self.__model__)
 
-        return self._convert((await self.session.execute(stmt)).scalars().one_or_none())
+        res = (await self.session.execute(stmt)).scalars().one_or_none()
+
+        if res is not None:
+            return self._convert(res)
     
 
     async def get_by(
@@ -44,7 +47,7 @@ class SqlAlchemyCrudMapper[T](ABC):
         limit: int | None, 
         offset: int | None, 
         filters: dict = {}
-    ) -> list[T]:
+    ):
         stmt = create_stmt(filters)
 
         if limit:
@@ -58,7 +61,7 @@ class SqlAlchemyCrudMapper[T](ABC):
         return [self._convert(el) for el in res]
  
 
-    async def count(self, create_stmt: IGetManyStmtCreator, filters: dict = {}) -> int:
+    async def count(self, create_stmt: IGetManyStmtCreator, filters: dict = {}):
         stmt = create_stmt(filters)
 
         stmt = sa.select(sa.func.count()).select_from(
@@ -68,12 +71,15 @@ class SqlAlchemyCrudMapper[T](ABC):
         return (await self.session.execute(stmt)).scalar_one()
 
 
-    async def update(self, ident: UUID | str, data: dict) -> T:
+    async def update(self, ident: UUID | str, data: dict):
         stmt = sa.update(self.__model__).where(
             self.ident_column == ident
         ).values(**data).returning(self.__model__)
 
-        return self._convert((await self.session.execute(stmt)).scalars().one_or_none())
+        res = (await self.session.execute(stmt)).scalars().one_or_none()
+
+        if res is not None:
+            return self._convert(res)
 
 
     async def delete(self, ident: UUID):
@@ -85,7 +91,7 @@ class SqlAlchemyCrudMapper[T](ABC):
 
 
     @property
-    def ident_column(self):
+    def ident_column(self) -> sa.ColumnClause:
         return sa.inspect(self.__model__).primary_key[0]
 
 
