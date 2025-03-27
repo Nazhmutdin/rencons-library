@@ -36,6 +36,11 @@ class PermissionDict(TypedDict):
     acst_data_update: bool
     acst_data_delete: bool
 
+    personal_agency_data_get: bool
+    personal_agency_data_create: bool
+    personal_agency_data_update: bool
+    personal_agency_data_delete: bool
+
     acst_file_download: bool
     acst_file_upload: bool
 
