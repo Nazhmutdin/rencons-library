@@ -12,6 +12,7 @@ sqlalchemy = "^2.0.36"
 dateutils = "^0.6.12"
 pydantic = "^2.10.3"
 python-jose = "^3.4.0"
+httpx = "^0.28.1"
 
 
 [tool.poetry.group.dev.dependencies]
