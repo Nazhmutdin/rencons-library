@@ -76,18 +76,26 @@ class BaseTestGetEndpoint[DTO](BaseTestEndpoint):
 class BaseTestUpdateEndpoint(BaseTestEndpoint):
     __update_shema__: RootModel
 
-    async def _test_success_update(self, api_path: str, ident: UUID, data: dict, client: AsyncClient, access_token: str):
+    async def _test_success_update(
+        self, 
+        update_api_path: str, 
+        get_api_path: str,
+        ident: UUID, 
+        data: dict, 
+        client: AsyncClient, 
+        access_token: str
+    ):
         self._set_access_cookie(client, access_token)
 
         res = await client.patch(
-            api_path, 
+            update_api_path, 
             params={"ident": ident.hex},
             json=self.__update_shema__.model_validate(data).model_dump(mode="json")
         )
 
         assert res.status_code == 200
 
-        res = await client.get(api_path, params={"ident": ident.hex})
+        res = await client.get(get_api_path, params={"ident": ident.hex})
 
         assert res.status_code == 200
 
@@ -121,19 +129,28 @@ class BaseTestUpdateEndpoint(BaseTestEndpoint):
 
 class BaseTestDeleteEndpoint[DTO](BaseTestEndpoint):
 
-    async def _test_success_delete(self, api_path: str, ident: UUID, item: DTO, client: AsyncClient, access_token: str):
+    async def _test_success_delete(
+        self, 
+        delete_api_path: str, 
+        get_api_path: str, 
+        create_api_path: str, 
+        ident: UUID, 
+        item: DTO, 
+        client: AsyncClient, 
+        access_token: str
+    ):
         self._set_access_cookie(client, access_token)
 
-        res = await client.delete(api_path, params={"ident": ident.hex})
+        res = await client.delete(delete_api_path, params={"ident": ident.hex})
 
         assert res.status_code == 200
 
-        res = await client.get(api_path, params={"ident": ident.hex})
+        res = await client.get(get_api_path, params={"ident": ident.hex})
 
         assert res.status_code == 404
 
         res = await client.post(
-            api_path, 
+            create_api_path, 
             json=RootModel(item).model_dump(mode="json")
         )
 
