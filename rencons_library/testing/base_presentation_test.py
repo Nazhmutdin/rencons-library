@@ -1,4 +1,8 @@
 from uuid import UUID
+from typing import BinaryIO
+from pathlib import Path
+from hashlib import md5
+from os import listdir, remove
 
 from pydantic import RootModel
 from httpx import AsyncClient, Cookies
@@ -168,6 +172,101 @@ class BaseTestDeleteEndpoint[DTO](BaseTestEndpoint):
         self._set_access_cookie(client, access_token)
 
         response = await client.delete(api_path, params={"ident": ident.hex})
+
+        assert response.status_code == assert_code
+
+        return response
+
+
+class BaseTestFileDownloadEndpoint(BaseTestEndpoint):
+
+    async def _test_success(
+        self, 
+        api_path: str,
+        file: BinaryIO,
+        client: AsyncClient, 
+        access_token: str
+    ): 
+        self._set_access_cookie(client, access_token)
+
+        response = await client.get(api_path)
+
+        response_checksum = self.compute_checksum(response.content)
+        file_checksum = self.compute_checksum(file.read())
+
+        assert response.status_code == 200
+        assert response_checksum == file_checksum
+
+        return response
+
+
+    async def _test_failed(
+        self, 
+        api_path: str, 
+        client: AsyncClient, 
+        access_token: str, 
+        assert_code: int
+    ): 
+        self._set_access_cookie(client, access_token)
+        
+        response = await client.get(api_path)
+
+        assert response.status_code == assert_code
+
+        return response
+
+
+    def compute_checksum(self, data: str | bytes) -> str:
+        return md5(data).hexdigest()
+
+
+class BaseTestFileUploadEndpoint(BaseTestEndpoint):
+
+    async def _test_success(
+        self, 
+        api_path: str,
+        file: BinaryIO,
+        static_folder_path: Path,
+        client: AsyncClient, 
+        access_token: str
+    ): 
+        self._set_access_cookie(client, access_token)
+        before_files_amount = len(listdir(static_folder_path))
+
+        response = await client.post(
+            api_path,
+            files={
+                "file": file
+            }
+        )
+        
+        after_files_amount = len(listdir(static_folder_path))
+
+        assert response.status_code == 200
+        assert (after_files_amount - before_files_amount) == 1
+
+        for file_name in listdir(static_folder_path):
+            remove(static_folder_path / file_name)
+
+        return response
+
+
+    async def _test_failed(
+        self, 
+        api_path: str,
+        file: BinaryIO,
+        client: AsyncClient, 
+        access_token: str,
+        assert_code: int
+    ): 
+        self._set_access_cookie(client, access_token)
+
+        response = await client.post(
+            api_path,
+            files={
+                "file": file
+            }
+        )
 
         assert response.status_code == assert_code
 
