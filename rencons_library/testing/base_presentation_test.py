@@ -26,7 +26,7 @@ class BaseTestCreateEndpoint[DTO](BaseTestEndpoint):
         response = await client.post(api_path, json=RootModel(item).model_dump(mode="json"))
 
         assert response.status_code == 200
-        assert response.text == RootModel(item).model_dump_json(by_alias=True, exclude=["html"])
+        assert response.text == RootModel(item).model_dump_json(by_alias=True)
 
         return response
 
@@ -41,7 +41,7 @@ class BaseTestCreateEndpoint[DTO](BaseTestEndpoint):
     ):
         self._set_access_cookie(client, access_token)
 
-        response = await client.post(api_path, json=RootModel(item).model_dump(mode="json", exclude=["html"]))
+        response = await client.post(api_path, json=RootModel(item).model_dump(mode="json"))
 
         assert response.status_code == assert_code
 
@@ -57,7 +57,7 @@ class BaseTestGetEndpoint[DTO](BaseTestEndpoint):
         response = await client.get(api_path, params={"ident": ident.hex})
 
         assert response.status_code == 200
-        assert response.text == RootModel(item).model_dump_json(by_alias=True, exclude=["html"])
+        assert response.text == RootModel(item).model_dump_json(by_alias=True)
 
 
     async def _test_failed_get(
@@ -105,7 +105,7 @@ class BaseTestUpdateEndpoint(BaseTestEndpoint):
 
         result: dict = self.__update_shema__.model_validate_json(res.text).model_dump(mode="json", by_alias=False)
 
-        for key, value in self.__update_shema__.model_validate(data).model_dump(mode="json", by_alias=False, exclude=["html"]).items():
+        for key, value in self.__update_shema__.model_validate(data).model_dump(mode="json", by_alias=False).items():
             assert result[key] == value
 
 
